@@ -8,6 +8,11 @@ pipeline{
 	}
 
 	stages {
+		stage('Checkout'){
+			steps{
+				checkout scm
+			}
+		}
 		stage('Init') {
 			steps {
 				echo 'Initializing.'
@@ -21,7 +26,7 @@ pipeline{
 			steps {
 				echo 'Building image and pushing to DockerHub.'
 
-				sh 'docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t $IMAGE_NAME:$IMAGE_TAG .'
+				sh 'docker buildx build --push --platform linux/amd64,linux/arm64 -t $IMAGE_NAME:$IMAGE_TAG .'
 			}
 		}
 	}
