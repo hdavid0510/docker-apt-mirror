@@ -29,9 +29,10 @@ WORKDIR /
 COPY files /
 
 # create nonroot user for mirror
-RUN		groupadd -g ${GID} -o ${USERNAME} 
-RUN 	useradd -m -u ${UID} -g ${GID} -o -s /bin/bash ${USERNAME} \
-	&&	id
+RUN		groupadd -g ${GID} -o ${USERNAME} \
+	&&	useradd -m -u ${UID} -g ${GID} -o -s /bin/bash ${USERNAME} \
+	&&	id \
+	&&	chown -R ${USERNAME}:${USERNAME} /apt-mirror
 USER	${USERNAME}
 
 # run configs
