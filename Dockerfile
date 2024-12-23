@@ -8,12 +8,6 @@ ARG USERNAME=aptmirror
 WORKDIR /
 COPY files /
 
-# create nonroot user for mirror
-RUN		groupadd -g ${GID} -o ${USERNAME} \
-	&&	useradd -m -u ${UID} -g ${GID} -o -s /bin/bash ${USERNAME}
-USER	${USERNAME}
-
-# update, install packages
 ENV DEBIAN_FRONTEND=noninteractive
 RUN		apt-get -qq update \
 	&&	apt-get -yqq install apt-utils --no-install-recommends \
@@ -28,7 +22,10 @@ RUN		apt-get -qq update \
 	&&	mkdir /var/run/sshd \
 	&&	echo 'root:root' | chpasswd \
 	&&	sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config \
-	&&	sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
+	&&	sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config \
+	&&	groupadd -g ${GID} -o ${USERNAME} \
+	&&	useradd -m -u ${UID} -g ${GID} -o -s /bin/bash ${USERNAME}
+USER	${USERNAME}
 
 # run configs
 VOLUME ["/apt-mirror"]
