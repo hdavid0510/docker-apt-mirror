@@ -10,9 +10,7 @@ COPY files /
 
 # create nonroot user for mirror
 RUN		groupadd -g ${GID} -o ${USERNAME} \
-	&&	useradd -m -u ${UID} -g ${GID} -o -s /bin/bash ${USERNAME} \
-	&&	id \
-	&&	chown -R ${USERNAME}:${USERNAME} /apt-mirror
+	&&	useradd -m -u ${UID} -g ${GID} -o -s /bin/bash ${USERNAME}
 USER	${USERNAME}
 
 # update, install packages
@@ -26,6 +24,7 @@ RUN		apt-get -qq update \
 	&&	wget https://raw.githubusercontent.com/apt-mirror/apt-mirror/master/apt-mirror -O /usr/bin/apt-mirror \
 	&&	chmod 755 /usr/bin/apt-mirror \
 	&&	mkdir /apt-mirror \
+	&&	chown -R ${USERNAME}:${USERNAME} /apt-mirror \
 	&&	mkdir /var/run/sshd \
 	&&	echo 'root:root' | chpasswd \
 	&&	sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config \
