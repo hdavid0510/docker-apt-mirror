@@ -10,11 +10,6 @@ pipeline{
 	}
 
 	stages {
-		stage('Checkout'){
-			steps{
-				checkout scm
-			}
-		}
 		stage('Build images') {
 			parallel {
 				stage('linux/amd64') {
