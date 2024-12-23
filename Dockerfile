@@ -22,11 +22,11 @@ RUN		apt-get -qq update \
 	&&	apt-get -yqq install nano software-properties-common wget openssh-server apt-mirror cron --no-install-recommends \
 	&&	apt-get -qq clean \
 	&&	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-	mv /usr/bin/apt-mirror /usr/bin/apt-mirror.bak \
+	&&	mv /usr/bin/apt-mirror /usr/bin/apt-mirror.bak \
 	&&	wget https://raw.githubusercontent.com/apt-mirror/apt-mirror/master/apt-mirror -O /usr/bin/apt-mirror \
 	&&	chmod 755 /usr/bin/apt-mirror \
 	&&	mkdir /apt-mirror \
-	mkdir /var/run/sshd \
+	&&	mkdir /var/run/sshd \
 	&&	echo 'root:root' | chpasswd \
 	&&	sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config \
 	&&	sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
