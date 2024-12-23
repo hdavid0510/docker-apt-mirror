@@ -1,6 +1,8 @@
 pipeline{
 	agent any
-
+	options {
+		parallelsAlwaysFailFast()
+	}
 	environment {
 		IMAGE_NAME="hdavid0510/apt-mirror"
 		REGISTRY_CREDENTIALS=credentials('dockerhub-credential')
@@ -13,19 +15,21 @@ pipeline{
 				checkout scm
 			}
 		}
-		stage('Init') {
-			steps {
-				echo 'Initializing.'
-
-				sh 'echo $REGISTRY_CREDENTIALS_PSW | docker login -u $REGISTRY_CREDENTIALS_USR --password-stdin'
-				echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-				echo "Building ${IMAGE_NAME} on branch ${IMAGE_TAG}"
+		stage('Build images') {
+			parallel {
+				stage('linux/amd64') {
+					steps {
+						echo 'Building linux/amd64'
+						sh 'docker buildx build --push --platform linux/amd64,linux/arm64 -t $IMAGE_NAME:$IMAGE_TAG .'
+					}
+				}
 			}
 		}
-		stage('Build/Push') {
+		stage('Init') {
 			steps {
-				echo 'Building image and pushing to DockerHub.'
-
+				echo 'Dockerhub login'
+				sh 'echo $REGISTRY_CREDENTIALS_PSW | docker login -u $REGISTRY_CREDENTIALS_USR --password-stdin'
+				echo "Pushing ${IMAGE_NAME} from branch ${IMAGE_TAG}, Build #${env.BUILD_ID} @${env.JENKINS_URL} "
 				sh 'docker buildx build --push --platform linux/amd64,linux/arm64 -t $IMAGE_NAME:$IMAGE_TAG .'
 			}
 		}
