@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM ubuntu:22.04
+FROM --platform=$TARGETPLATFORM ubuntu:24.04
 
 ARG UID=7000
 ARG GID=7000
